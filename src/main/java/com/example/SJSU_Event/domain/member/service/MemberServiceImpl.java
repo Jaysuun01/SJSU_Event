@@ -7,22 +7,31 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     @Transactional
     @Override
-    public Long register(String username, String name, Role role) {
-        Member member = Member.of(username, name, role);
-        member.convertRole(Role.USER);
+    public Long userRegister(String name) {
+        Member member = Member.of(String.valueOf(UUID.randomUUID()), name, Role.USER);
+        return memberRepository.save(member).getId();
+    }
+    @Transactional
+    @Override
+    public Long adminRegister(String name) {
+        Member member = Member.of(String.valueOf(UUID.randomUUID()), name, Role.USER);
         return memberRepository.save(member).getId();
     }
 
     @Transactional
     @Override
     public Long updateInfo(String username, String name) {
-        return 0L;
+        Member member = Member.of(String.valueOf(UUID.randomUUID()), name, Role.USER);
+        member.modifyInfo(name);
+        return member.getId();
     }
 
     @Transactional

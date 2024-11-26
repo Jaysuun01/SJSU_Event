@@ -54,7 +54,12 @@ public class Member extends BaseTimeEntity implements UserDetails{
     public Member orElseThrow(Object memberNotFound) {
     }
 
+
     public void convertRole(Role role) {
         this.role =  role;
+    }
+
+    public void modifyInfo(String name) {
+        this.name = name;
     }
 }

@@ -6,5 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-    
+    Optional<Ticket> findByUuid(String uuid);
+
+    Optional<Ticket> findByEventId(Long promotionId);
+
+    void deleteByEventId(Long promotionId);
 }

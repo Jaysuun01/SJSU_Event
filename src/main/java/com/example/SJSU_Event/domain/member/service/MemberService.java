@@ -6,10 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface MemberService {
 
-    Long register(String name);
+    Long userRegister(String name);
 
-    @Transactional
-    Long register(String username, String name, Role role);
+    Long adminRegister(String name);
 
     Long updateInfo(String username, String name);
 
