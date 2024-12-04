@@ -43,4 +43,9 @@ public class Event extends BaseTimeEntity {
 
     public void update(EventRequestDto dto) {
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
 }

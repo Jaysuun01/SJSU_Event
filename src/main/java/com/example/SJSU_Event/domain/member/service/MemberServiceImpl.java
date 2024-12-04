@@ -51,7 +51,7 @@ public class MemberServiceImpl implements MemberService{
     // getByUsername: username을 기준으로 회원 조회
     @Transactional(readOnly = true)
     @Override
-    public Member getByUsername(Long memberId) {
+    public Member getByMemberId(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found with username: " + memberId));
     }

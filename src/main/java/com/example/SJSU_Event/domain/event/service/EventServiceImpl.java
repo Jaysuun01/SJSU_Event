@@ -9,12 +9,14 @@ import com.example.SJSU_Event.domain.member.exception.MemberHandler;
 import com.example.SJSU_Event.domain.member.repository.MemberRepository;
 import com.example.SJSU_Event.global.exception.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService{
@@ -25,6 +27,7 @@ public class EventServiceImpl implements EventService{
     public Long createEvent(Long memberId, EventRequestDto dto) {
         Member owner = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        log.info("owner Id: {}" , owner.getId());
         Event saveEvent = eventRepository.save(Event.of(owner.getId(), dto));
         return saveEvent.getId();
     }

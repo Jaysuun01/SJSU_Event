@@ -10,9 +10,9 @@ public interface MemberService {
 
     Long adminRegister(String name);
 
-    Long updateInfo(Long eventId, String name);
+    Long updateInfo(Long memberId, String name);
 
-    void deleteMember(Long eventId);
+    void deleteMember(Long memberId);
 
-    Member getByUsername(Long eventId);
+    Member getByMemberId(Long memberId);
 }

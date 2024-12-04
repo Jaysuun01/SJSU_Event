@@ -23,11 +23,13 @@ public class EventApiController {
     private final EventService eventService;
 
     @Operation(summary = "이벤트 작성 🔑", description = "로그인한 회원이 이벤트를 작성합니다.")
-    @ApiErrorCodeExample
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.EVENT_NOT_FOUND,
+    })
     @PostMapping("/{memberId}")
     public ApiResponseDto<Long> createEvent(
             @PathVariable Long memberId,
-            @RequestBody @Validated EventRequestDto eventRequest) {
+            @RequestBody EventRequestDto eventRequest) {
         return ApiResponseDto.onSuccess(eventService.createEvent(memberId, eventRequest));
     }
 
@@ -40,7 +42,7 @@ public class EventApiController {
     public ApiResponseDto<Long> updateEvent(
             @PathVariable Long memberId,
             @PathVariable Long eventId,
-            @RequestBody @Validated EventRequestDto eventRequest) {
+            @RequestBody EventRequestDto eventRequest) {
         return ApiResponseDto.onSuccess(eventService.updateEvent(memberId, eventId, eventRequest));
     }
 
