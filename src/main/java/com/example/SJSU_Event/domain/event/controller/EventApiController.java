@@ -1,14 +1,18 @@
 package com.example.SJSU_Event.domain.event.controller;
 
-
 import com.example.SJSU_Event.domain.event.dto.EventRequestDto;
-import com.example.SJSU_Event.domain.member.entity.Member;
+import com.example.SJSU_Event.domain.event.entity.Event;
+import com.example.SJSU_Event.domain.event.service.EventService;
+import com.example.SJSU_Event.global.annotation.api.ApiErrorCodeExample;
+import com.example.SJSU_Event.global.exception.code.ErrorStatus;
+import com.example.SJSU_Event.global.exception.dto.ApiResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.Tag;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import static org.apache.naming.ResourceRef.AUTH;
+import java.util.List;
 
 @Tag(name = "Event API", description = "이벤트 API")
 @ApiResponse(responseCode = "2000", description = "성공")
@@ -16,44 +20,41 @@ import static org.apache.naming.ResourceRef.AUTH;
 @RequiredArgsConstructor
 @RestController
 public class EventApiController {
-    private final EventCommandService eventCommandService;
-    private final EventQueryService eventQueryService;
+    private final EventService eventService;
 
     @Operation(summary = "이벤트 작성 🔑", description = "로그인한 회원이 이벤트를 작성합니다.")
-    @ApiErrorCodeExample(status = AUTH)
-    @PostMapping
+    @ApiErrorCodeExample
+    @PostMapping("/{memberId}")
     public ApiResponseDto<Long> createEvent(
-            @AuthUser Member member,
+            @PathVariable Long memberId,
             @RequestBody @Validated EventRequestDto eventRequest) {
-        return ApiResponseDto.onSuccess(eventCommandService.createEvent(member, eventRequest));
+        return ApiResponseDto.onSuccess(eventService.createEvent(memberId, eventRequest));
     }
 
     @Operation(summary = "이벤트 수정 🔑", description = "로그인한 회원이 작성한 이벤트를 수정합니다.")
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
-            ErrorStatus.NO_PERMISSION,
             ErrorStatus.MEMBER_NOT_FOUND
-    }, status = AUTH)
-    @PutMapping("/{eventId}")
+    })
+    @PutMapping("/{eventId}/member/{memberId}")
     public ApiResponseDto<Long> updateEvent(
-            @AuthUser Member member,
+            @PathVariable Long memberId,
             @PathVariable Long eventId,
             @RequestBody @Validated EventRequestDto eventRequest) {
-        return ApiResponseDto.onSuccess(eventCommandService.updateEvent(member, eventId, eventRequest));
+        return ApiResponseDto.onSuccess(eventService.updateEvent(memberId, eventId, eventRequest));
     }
 
     @Operation(summary = "이벤트 삭제 🔑", description = "로그인한 회원이 작성한 이벤트를 삭제합니다.")
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
-            ErrorStatus.NO_PERMISSION,
             ErrorStatus.MEMBER_NOT_FOUND
-    }, status = AUTH)
-    @DeleteMapping("/{eventId}")
-    public ApiResponseDto<Boolean> deleteEvent(
-            @AuthUser Member member,
+    })
+    @DeleteMapping("/{eventId}/member/{memberId}")
+    public ApiResponseDto<Void> deleteEvent(
+            @PathVariable Long memberId,
             @PathVariable Long eventId) {
-        eventCommandService.deleteEvent(member, eventId);
-        return ApiResponseDto.onSuccess(true);
+        eventService.deleteEvent(memberId, eventId);
+        return ApiResponseDto.onSuccess(null);
     }
 
     @Operation(summary = "이벤트 단건 조회", description = "이벤트 ID로 단건 조회합니다.")
@@ -61,29 +62,17 @@ public class EventApiController {
             ErrorStatus.EVENT_NOT_FOUND
     })
     @GetMapping("/{eventId}")
-    public ApiResponseDto<Event> getEvent(@PathVariable Long eventId) {
-        return ApiResponseDto.onSuccess(eventQueryService.getEventById(eventId));
+    public ApiResponseDto<Event> getById(@PathVariable Long eventId) {
+        return ApiResponseDto.onSuccess(eventService.getById(eventId).orElseThrow(() ->
+                new RuntimeException("Event not found with id: " + eventId)));
     }
 
     @Operation(summary = "이벤트 목록 조회", description = "이벤트 목록을 페이징하여 조회합니다.")
     @ApiErrorCodeExample(value = {
             ErrorStatus.MEMBER_NOT_FOUND
     })
-    @GetMapping("/my")
-    public ApiResponseDto<List<Event>> getMyEvents(
-            @AuthUser Member member,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return ApiResponseDto.onSuccess(eventQueryService.getEventsByOwner(member, pageable));
-    }
-
-    @Operation(summary = "전체 이벤트 목록 조회", description = "전체 이벤트 목록을 페이징하여 조회합니다.")
-    @GetMapping
-    public ApiResponseDto<List<Event>> getAllEvents(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return ApiResponseDto.onSuccess(eventQueryService.getAllEvents(pageable));
+    @GetMapping("/member/{memberId}")
+    public ApiResponseDto<List<Event>> getEventsByOwner(@PathVariable Long memberId) {
+        return ApiResponseDto.onSuccess(eventService.getEventsByOwner(memberId));
     }
 }

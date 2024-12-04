@@ -28,6 +28,8 @@ public enum ErrorStatus implements BaseCode{
     TICKET_NOT_FOUND(NOT_FOUND, 4150, "찾을 수 없는 티켓 정보입니다."),
     TICKET_ONLY_CAN_BE_OPENED_BY_OWNER(BAD_REQUEST, 4151, "티켓은 이벤트 주최자에 의해서만 열람가능합니다");
 
+
+
     private final HttpStatus httpStatus;
     private final Integer code;
     private final String message;

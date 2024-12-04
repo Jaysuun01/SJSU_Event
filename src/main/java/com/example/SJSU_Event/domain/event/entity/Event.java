@@ -22,9 +22,7 @@ public class Event extends BaseTimeEntity {
     @Column(name = "event_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_owner_id")
-    private Member eventOwner;
+    private Long eventOwnerId;
 
     private int maxAudience;
     private int entranceFee;
@@ -32,9 +30,9 @@ public class Event extends BaseTimeEntity {
     private String startTime;
     private String endTime;
 
-    public static Event of(Member owner, EventRequestDto dto) {
+    public static Event of(Long owner, EventRequestDto dto) {
         return Event.builder()
-                .eventOwner(owner)
+                .eventOwnerId(owner)
                 .maxAudience(dto.getMaxAudience())
                 .entranceFee(dto.getEntranceFee())
                 .showDate(dto.getShowDate())

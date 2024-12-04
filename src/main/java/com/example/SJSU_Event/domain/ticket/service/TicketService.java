@@ -6,5 +6,5 @@ import com.example.SJSU_Event.domain.ticket.entity.Ticket;
 import java.util.Optional;
 
 public interface TicketService {
-    Ticket findTicketByEventId(Long eventId, Member member);
+    Ticket findTicketByEventId(Long eventId, Long memberId);
 }

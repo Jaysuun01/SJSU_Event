@@ -31,13 +31,11 @@ public class Ticket extends BaseTimeEntity {
     @Column(name = "due_date")
     private LocalDate dueDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id")
-    private Event event;
+    private Long eventId;
 
-    public Ticket of(Event event, String uuid, LocalDate localDate) {
+    public Ticket of(Long eventId, String uuid, LocalDate localDate) {
         return Ticket.builder()
-                .event(event)
+                .eventId(eventId)
                 .uuid(uuid)
                 .dueDate(localDate)
                 .build();

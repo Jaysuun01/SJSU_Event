@@ -17,7 +17,7 @@ import java.util.List;
 @SuperBuilder
 @EqualsAndHashCode(of = "id", callSuper = false)
 @Table(name = "member")
-public class Member extends BaseTimeEntity implements UserDetails{
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +28,7 @@ public class Member extends BaseTimeEntity implements UserDetails{
     private String username;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private Role role;
 
     private String name;
@@ -40,26 +41,15 @@ public class Member extends BaseTimeEntity implements UserDetails{
                 .build();
     }
 
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    @Override
-    public String getPassword() {
-        return "";
-    }
-
-    public Member orElseThrow(Object memberNotFound) {
-    }
-
-
     public void convertRole(Role role) {
         this.role =  role;
     }
 
     public void modifyInfo(String name) {
         this.name = name;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

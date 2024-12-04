@@ -22,37 +22,36 @@ public class EventServiceImpl implements EventService{
     private final EventRepository eventRepository;
 
     @Override
-    public Long createEvent(String username, EventRequestDto dto) {
-        Member owner = memberRepository.findByUsername(username)
+    public Long createEvent(Long memberId, EventRequestDto dto) {
+        Member owner = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Event saveEvent = eventRepository.save(Event.of(owner, dto));
+        Event saveEvent = eventRepository.save(Event.of(owner.getId(), dto));
         return saveEvent.getId();
     }
 
     @Override
-    public Long updateEvent(String username, Long eventId ,EventRequestDto dto) {
-        Member member = memberRepository.findByUsername(username)
+    public Long updateEvent(Long memberId, Long eventId ,EventRequestDto dto) {
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventHandler(ErrorStatus.EVENT_NOT_FOUND));
 
         validateWriter(member, event);
-
-        event.update(dto);
+        eventRepository.update(event);
         return eventRepository.save(event).getId();
     }
 
     @Override
-    public void deleteEvent(String username, Long eventId) {
-        Member member = memberRepository.findByUsername(username)
+    public void deleteEvent(Long memberId, Long eventId) {
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventHandler(ErrorStatus.EVENT_NOT_FOUND));
 
         validateWriter(member, event);
-        eventRepository.delete(event);
+        eventRepository.delete(Optional.of(event));
     }
 
     @Override
@@ -61,13 +60,12 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public List<Event> getEventsByOwner(String username) {
-        Member owner = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        return eventRepository.findByOwner(owner);
+    public List<Event> getEventsByOwner(Long memberId) {
+        return eventRepository.findByOwner(memberId);
     }
+
     private static void validateWriter(Member member, Event event) {
-        if (!member.equals(event.getEventOwner())) {
+        if (!member.equals(event.getEventOwnerId())) {
             throw new EventHandler(ErrorStatus.EVENT_ONLY_TOUCHED_BY_OWNER);
         }
     }

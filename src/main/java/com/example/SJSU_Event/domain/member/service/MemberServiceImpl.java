@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,7 +29,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Transactional
     @Override
-    public Long updateInfo(String username, String name) {
+    public Long updateInfo(Long memberId, String name) {
         Member member = Member.of(String.valueOf(UUID.randomUUID()), name, Role.USER);
         member.modifyInfo(name);
         return member.getId();
@@ -36,13 +37,22 @@ public class MemberServiceImpl implements MemberService{
 
     @Transactional
     @Override
-    public void deleteMember(String username) {
+    public void deleteMember(Long memberId) {
+        Optional<Member> memberOptional = memberRepository.findById(memberId);
 
+        // 해당 username에 맞는 회원이 있으면 삭제
+        if (memberOptional.isPresent()) {
+            memberRepository.delete(memberId);
+        } else {
+            throw new RuntimeException("Member not found with username: " + memberId);
+        }
     }
 
+    // getByUsername: username을 기준으로 회원 조회
     @Transactional(readOnly = true)
     @Override
-    public Member getByUsername(String username) {
-        return null;
+    public Member getByUsername(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found with username: " + memberId));
     }
 }

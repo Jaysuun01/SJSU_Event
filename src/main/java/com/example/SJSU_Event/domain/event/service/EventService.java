@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EventService {
-    Long createEvent(String username, EventRequestDto dto);
+    Long createEvent(Long memberId, EventRequestDto dto);
 
-    Long updateEvent(String username, Long eventId ,EventRequestDto dto);
+    Long updateEvent(Long memberId, Long eventId ,EventRequestDto dto);
 
-    void deleteEvent(String username, Long eventId);
+    void deleteEvent(Long memberId, Long eventId);
 
     Optional<Event> getById(Long eventId);
 
-    List<Event> getEventsByOwner(String username);
+    List<Event> getEventsByOwner(Long memberId);
 
 }
