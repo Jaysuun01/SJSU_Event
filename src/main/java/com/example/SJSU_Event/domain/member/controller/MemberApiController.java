@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Member API", description = "Member API")
-@ApiResponse(responseCode = "2000", description = "성공")
+@ApiResponse(responseCode = "2000", description = "Success")
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
 @RestController
