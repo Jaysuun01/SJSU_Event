@@ -18,7 +18,6 @@ public class TicketRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // findByUuid: UUID를 기준으로 티켓 조회
     public Optional<Ticket> findByUuid(String uuid) {
         String sql = """
         SELECT 
@@ -46,7 +45,6 @@ public class TicketRepository {
         }
     }
 
-    // findByEventId: eventId를 기준으로 티켓 조회
     public Optional<Ticket> findByEventId(Long eventId) {
         String sql = """
         SELECT 
@@ -74,7 +72,6 @@ public class TicketRepository {
         }
     }
 
-    // deleteByEventId: eventId를 기준으로 티켓 삭제
     public void deleteByEventId(Long eventId) {
         String sql = "DELETE FROM ticket WHERE event_id = ?";
         int rowsAffected = jdbcTemplate.update(sql, eventId);

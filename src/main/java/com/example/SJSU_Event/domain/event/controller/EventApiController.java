@@ -14,15 +14,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@Tag(name = "Event API", description = "이벤트 API")
-@ApiResponse(responseCode = "2000", description = "성공")
+@Tag(name = "Event API", description = "Event API")
+@ApiResponse(responseCode = "2000", description = "Success")
 @RequestMapping("/api/events")
 @RequiredArgsConstructor
 @RestController
 public class EventApiController {
     private final EventService eventService;
 
-    @Operation(summary = "이벤트 작성 🔑", description = "로그인한 회원이 이벤트를 작성합니다.")
+    @Operation(summary = "Create Event 🔑", description = "Login user can create the event")
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
     })
@@ -33,7 +33,7 @@ public class EventApiController {
         return ApiResponseDto.onSuccess(eventService.createEvent(memberId, eventRequest));
     }
 
-    @Operation(summary = "이벤트 수정 🔑", description = "로그인한 회원이 작성한 이벤트를 수정합니다.")
+    @Operation(summary = "Modify Event 🔑", description = "The user can modify the event")
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
             ErrorStatus.MEMBER_NOT_FOUND
@@ -46,7 +46,7 @@ public class EventApiController {
         return ApiResponseDto.onSuccess(eventService.updateEvent(memberId, eventId, eventRequest));
     }
 
-    @Operation(summary = "이벤트 삭제 🔑", description = "로그인한 회원이 작성한 이벤트를 삭제합니다.")
+    @Operation(summary = "Delete Event 🔑", description = "The user can delete the event")
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
             ErrorStatus.MEMBER_NOT_FOUND
@@ -59,7 +59,7 @@ public class EventApiController {
         return ApiResponseDto.onSuccess(null);
     }
 
-    @Operation(summary = "이벤트 단건 조회", description = "이벤트 ID로 단건 조회합니다.")
+    @Operation(summary = "Search Event", description = "Search the only one event ")
     @ApiErrorCodeExample({
             ErrorStatus.EVENT_NOT_FOUND
     })
@@ -69,7 +69,7 @@ public class EventApiController {
                 new RuntimeException("Event not found with id: " + eventId)));
     }
 
-    @Operation(summary = "이벤트 목록 조회", description = "이벤트 목록을 페이징하여 조회합니다.")
+    @Operation(summary = "Search Event list", description = "Search the all events that user created")
     @ApiErrorCodeExample(value = {
             ErrorStatus.MEMBER_NOT_FOUND
     })

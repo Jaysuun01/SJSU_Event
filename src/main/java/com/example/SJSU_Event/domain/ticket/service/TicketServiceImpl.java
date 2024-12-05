@@ -18,8 +18,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public Ticket findTicketByEventId(Long eventId, Long memberId) {
-        // 현재는 ticket의 eventId와 memberId를 비교하고 있는데,
-        // 실제로는 이벤트의 소유자와 memberId를 비교해야 합니다
+
         Ticket ticket = ticketRepository.findByEventId(eventId)
                 .orElseThrow(() -> new TicketHandler(ErrorStatus.TICKET_NOT_FOUND));
 

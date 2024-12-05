@@ -48,7 +48,6 @@ public class EventRepository {
                 , ownerId);
     }
 
-    // 새로운 메서드들 추가
     public Event save(Event event) {
         log.info("eventOwnerId = {}", event.getEventOwnerId());
         String sql = "INSERT INTO event (event_owner_id, max_audience, entrance_fee, show_date, start_time, end_time) " +

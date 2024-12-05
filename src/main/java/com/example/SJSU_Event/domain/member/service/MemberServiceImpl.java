@@ -40,7 +40,6 @@ public class MemberServiceImpl implements MemberService{
     public void deleteMember(Long memberId) {
         Optional<Member> memberOptional = memberRepository.findById(memberId);
 
-        // 해당 username에 맞는 회원이 있으면 삭제
         if (memberOptional.isPresent()) {
             memberRepository.delete(memberId);
         } else {
@@ -48,7 +47,6 @@ public class MemberServiceImpl implements MemberService{
         }
     }
 
-    // getByUsername: username을 기준으로 회원 조회
     @Transactional(readOnly = true)
     @Override
     public Member getByMemberId(Long memberId) {

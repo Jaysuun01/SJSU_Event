@@ -42,8 +42,7 @@ public class EventServiceImpl implements EventService{
 
         validateWriter(member, event);
 
-        // Event 클래스에 update 메소드 구현
-        event.update(dto);  // dto의 내용을 event에 반영
+        event.update(dto);
         eventRepository.update(event);
         return eventId;
     }
@@ -57,7 +56,7 @@ public class EventServiceImpl implements EventService{
                 .orElseThrow(() -> new EventHandler(ErrorStatus.EVENT_NOT_FOUND));
 
         validateWriter(member, event);
-        eventRepository.delete(event);  // Optional.of(event) 대신 event 직접 전달
+        eventRepository.delete(event);
     }
 
     @Override
@@ -71,7 +70,8 @@ public class EventServiceImpl implements EventService{
     }
 
     private static void validateWriter(Member member, Event event) {
-        if (!member.getId().equals(event.getEventOwnerId())) {  // member의 id와 event의 owner id를 비교
+        //Compare Event owner id and memberID
+        if (!member.getId().equals(event.getEventOwnerId())) {
             throw new EventHandler(ErrorStatus.EVENT_ONLY_TOUCHED_BY_OWNER);
         }
     }

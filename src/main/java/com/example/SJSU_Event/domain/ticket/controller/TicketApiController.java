@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "Ticket API", description = "Ticket API")
-@ApiResponse(responseCode = "2000", description = "성공")
+@ApiResponse(responseCode = "2000", description = "Success")
 @RequestMapping("/api/tickets")
 @RequiredArgsConstructor
 @RestController
