@@ -42,6 +42,11 @@ public class Event extends BaseTimeEntity {
     }
 
     public void update(EventRequestDto dto) {
+        this.maxAudience = dto.getMaxAudience();
+        this.entranceFee = dto.getEntranceFee();
+        this.showDate = dto.getShowDate();
+        this.startTime = dto.getStartTime();
+        this.endTime = dto.getEndTime();
     }
 
     public void setId(long id) {

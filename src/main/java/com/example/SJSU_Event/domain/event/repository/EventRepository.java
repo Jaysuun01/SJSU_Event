@@ -3,6 +3,7 @@ package com.example.SJSU_Event.domain.event.repository;
 import com.example.SJSU_Event.domain.event.entity.Event;
 import com.example.SJSU_Event.domain.member.entity.Member;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -24,16 +25,27 @@ public class EventRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void delete(Optional<Event> event) {
-        if (event.isPresent()) {
-            String sql = "DELETE FROM event WHERE event_id = ?";
-            jdbcTemplate.update(sql, event.get().getId());
-        }
+    public void delete(Event event) {
+        String sql = "DELETE FROM event WHERE event_id = ?";
+        jdbcTemplate.update(sql, event.getId());
     }
 
     public List<Event> findByOwner(Long ownerId) {
-        String sql = "SELECT * FROM event WHERE event_owner_id = ?";
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Event.class), ownerId);
+        String sql = """
+        SELECT * FROM event WHERE event_owner_id = ?
+    """;
+
+        return jdbcTemplate.query(sql, (rs, rowNum) ->
+                        Event.builder()
+                                .id(rs.getLong("event_id"))
+                                .eventOwnerId(rs.getLong("event_owner_id"))
+                                .maxAudience(rs.getInt("max_audience"))
+                                .entranceFee(rs.getInt("entrance_fee"))
+                                .showDate(rs.getDate("show_date") != null ? rs.getDate("show_date").toLocalDate() : null)
+                                .startTime(rs.getString("start_time"))
+                                .endTime(rs.getString("end_time"))
+                                .build()
+                , ownerId);
     }
 
     // 새로운 메서드들 추가
@@ -71,9 +83,26 @@ public class EventRepository {
     }
 
     public Optional<Event> findById(Long eventId) {
-        String sql = "SELECT * FROM event WHERE event_id = ?";
-        List<Event> events = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Event.class), eventId);
-        return events.isEmpty() ? Optional.empty() : Optional.of(events.get(0));
+        String sql = """
+        SELECT * FROM event WHERE event_id = ?
+    """;
+
+        try {
+            Event event = jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
+                            Event.builder()
+                                    .id(rs.getLong("event_id"))
+                                    .eventOwnerId(rs.getLong("event_owner_id")) // 여기서 rs.wasNull() 체크
+                                    .maxAudience(rs.getInt("max_audience"))
+                                    .entranceFee(rs.getInt("entrance_fee"))
+                                    .showDate(rs.getDate("show_date") != null ? rs.getDate("show_date").toLocalDate() : null)
+                                    .startTime(rs.getString("start_time"))
+                                    .endTime(rs.getString("end_time"))
+                                    .build()
+                    , eventId);
+            return Optional.ofNullable(event);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 }
 

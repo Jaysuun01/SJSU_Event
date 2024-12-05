@@ -1,6 +1,7 @@
 package com.example.SJSU_Event.domain.ticket.repository;
 
 import com.example.SJSU_Event.domain.ticket.entity.Ticket;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -19,16 +20,58 @@ public class TicketRepository {
 
     // findByUuid: UUID를 기준으로 티켓 조회
     public Optional<Ticket> findByUuid(String uuid) {
-        String sql = "SELECT * FROM ticket WHERE uuid = ?";
-        List<Ticket> tickets = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Ticket.class), uuid);
-        return tickets.isEmpty() ? Optional.empty() : Optional.of(tickets.get(0));
+        String sql = """
+        SELECT 
+            ticket_id as id,
+            uuid,
+            due_date as dueDate,
+            event_id as eventId
+        FROM ticket 
+        WHERE uuid = ?
+    """;
+
+        try {
+            Ticket ticket = jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
+                            Ticket.builder()
+                                    .id(rs.getLong("ticket_id"))
+                                    .uuid(rs.getString("uuid"))
+                                    .dueDate(rs.getDate("due_date") != null ?
+                                            rs.getDate("due_date").toLocalDate() : null)
+                                    .eventId(rs.getLong("event_id"))
+                                    .build()
+                    , uuid);
+            return Optional.ofNullable(ticket);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     // findByEventId: eventId를 기준으로 티켓 조회
     public Optional<Ticket> findByEventId(Long eventId) {
-        String sql = "SELECT * FROM ticket WHERE event_id = ?";
-        List<Ticket> tickets = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Ticket.class), eventId);
-        return tickets.isEmpty() ? Optional.empty() : Optional.of(tickets.get(0));
+        String sql = """
+        SELECT 
+            ticket_id as id,
+            uuid,
+            due_date as dueDate,
+            event_id as eventId
+        FROM ticket 
+        WHERE event_id = ?
+    """;
+
+        try {
+            Ticket ticket = jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
+                            Ticket.builder()
+                                    .id(rs.getLong("ticket_id"))
+                                    .uuid(rs.getString("uuid"))
+                                    .dueDate(rs.getDate("due_date") != null ?
+                                            rs.getDate("due_date").toLocalDate() : null)
+                                    .eventId(rs.getLong("event_id"))
+                                    .build()
+                    , eventId);
+            return Optional.ofNullable(ticket);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     // deleteByEventId: eventId를 기준으로 티켓 삭제

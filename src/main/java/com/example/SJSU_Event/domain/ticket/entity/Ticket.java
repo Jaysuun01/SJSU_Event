@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static lombok.AccessLevel.*;
 
@@ -33,7 +34,14 @@ public class Ticket extends BaseTimeEntity {
 
     private Long eventId;
 
-    public Ticket of(Long eventId, String uuid, LocalDate localDate) {
+    @PrePersist
+    private void generateData() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
+    }
+
+    public static Ticket of(Long eventId, String uuid, LocalDate localDate) {
         return Ticket.builder()
                 .eventId(eventId)
                 .uuid(uuid)

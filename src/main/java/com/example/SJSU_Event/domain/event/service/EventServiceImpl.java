@@ -33,7 +33,7 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public Long updateEvent(Long memberId, Long eventId ,EventRequestDto dto) {
+    public Long updateEvent(Long memberId, Long eventId, EventRequestDto dto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -41,8 +41,11 @@ public class EventServiceImpl implements EventService{
                 .orElseThrow(() -> new EventHandler(ErrorStatus.EVENT_NOT_FOUND));
 
         validateWriter(member, event);
+
+        // Event 클래스에 update 메소드 구현
+        event.update(dto);  // dto의 내용을 event에 반영
         eventRepository.update(event);
-        return eventRepository.save(event).getId();
+        return eventId;
     }
 
     @Override
@@ -54,7 +57,7 @@ public class EventServiceImpl implements EventService{
                 .orElseThrow(() -> new EventHandler(ErrorStatus.EVENT_NOT_FOUND));
 
         validateWriter(member, event);
-        eventRepository.delete(Optional.of(event));
+        eventRepository.delete(event);  // Optional.of(event) 대신 event 직접 전달
     }
 
     @Override
@@ -68,7 +71,7 @@ public class EventServiceImpl implements EventService{
     }
 
     private static void validateWriter(Member member, Event event) {
-        if (!member.equals(event.getEventOwnerId())) {
+        if (!member.getId().equals(event.getEventOwnerId())) {  // member의 id와 event의 owner id를 비교
             throw new EventHandler(ErrorStatus.EVENT_ONLY_TOUCHED_BY_OWNER);
         }
     }
