@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "Event API", description = "Event API")
-@ApiResponse(responseCode = "2000", description = "성공")
+@ApiResponse(responseCode = "2000", description = "Success")
 @RequestMapping("/api/events")
 @RequiredArgsConstructor
 @RestController
@@ -26,6 +26,7 @@ public class EventApiController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
     })
+    @CrossOrigin
     @PostMapping("/{memberId}")
     public ApiResponseDto<Long> createEvent(
             @PathVariable Long memberId,
@@ -38,6 +39,7 @@ public class EventApiController {
             ErrorStatus.EVENT_NOT_FOUND,
             ErrorStatus.MEMBER_NOT_FOUND
     })
+    @CrossOrigin
     @PutMapping("/{eventId}/member/{memberId}")
     public ApiResponseDto<Long> updateEvent(
             @PathVariable Long memberId,
@@ -51,6 +53,7 @@ public class EventApiController {
             ErrorStatus.EVENT_NOT_FOUND,
             ErrorStatus.MEMBER_NOT_FOUND
     })
+    @CrossOrigin
     @DeleteMapping("/{eventId}/member/{memberId}")
     public ApiResponseDto<Void> deleteEvent(
             @PathVariable Long memberId,
@@ -63,6 +66,7 @@ public class EventApiController {
     @ApiErrorCodeExample({
             ErrorStatus.EVENT_NOT_FOUND
     })
+    @CrossOrigin
     @GetMapping("/{eventId}")
     public ApiResponseDto<Event> getById(@PathVariable Long eventId) {
         return ApiResponseDto.onSuccess(eventService.getById(eventId).orElseThrow(() ->
@@ -73,6 +77,7 @@ public class EventApiController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.MEMBER_NOT_FOUND
     })
+    @CrossOrigin
     @GetMapping("/member/{memberId}")
     public ApiResponseDto<List<Event>> getEventsByOwner(@PathVariable Long memberId) {
         return ApiResponseDto.onSuccess(eventService.getEventsByOwner(memberId));

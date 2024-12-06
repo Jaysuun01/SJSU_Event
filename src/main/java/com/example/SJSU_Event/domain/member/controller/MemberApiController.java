@@ -26,6 +26,7 @@ public class MemberApiController {
 
     @Operation(summary = "SignUp 🔑", description = "Member Register(SignUp)")
     @ApiErrorCodeExample
+    @CrossOrigin
     @PostMapping("/register/user")
     public ApiResponseDto<Long> registerUser(@RequestBody SignUpDto dto) {
         return ApiResponseDto.onSuccess(memberService.signUp(dto));
@@ -33,6 +34,7 @@ public class MemberApiController {
 
     @Operation(summary = "LogIn", description = "get Member Info By Username & Password")
     @ApiErrorCodeExample
+    @CrossOrigin
     @GetMapping("/login/user")
     public ApiResponseDto<Member> login(@RequestParam String username, @RequestParam String password) {
         LoginDto loginDto = LoginDto.builder()
@@ -46,6 +48,7 @@ public class MemberApiController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
     })
+    @CrossOrigin
     @PutMapping("/{memberId}")
     public ApiResponseDto<Long> updateInfo(
             @PathVariable Long memberId,
@@ -57,6 +60,7 @@ public class MemberApiController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
     })
+    @CrossOrigin
     @DeleteMapping("/{memberId}")
     public ApiResponseDto<Void> deleteMember(@PathVariable Long memberId) {
         memberService.deleteMember(memberId);
@@ -67,6 +71,7 @@ public class MemberApiController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
     })
+    @CrossOrigin
     @GetMapping("/{memberId}")
     public ApiResponseDto<Member> getByMemberId(@PathVariable Long memberId) {
         return ApiResponseDto.onSuccess(memberService.getByMemberId(memberId));

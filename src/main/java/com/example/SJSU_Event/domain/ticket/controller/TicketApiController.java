@@ -31,6 +31,7 @@ public class TicketApiController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
     })
+    @CrossOrigin
     @PostMapping("/event/{eventId}/member/{memberId}")
     public ApiResponseDto<TicketResponse> createTicket(@PathVariable Long eventId, @PathVariable Long memberId) {
         Ticket ticket = ticketService.createTicket(eventId, memberId);
@@ -41,6 +42,7 @@ public class TicketApiController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
     })
+    @CrossOrigin
     @GetMapping("/event/{eventId}/member/{memberId}")
     public ApiResponseDto<TicketResponse> findTicketByEventId(@PathVariable Long eventId, @PathVariable Long memberId) {
         Ticket ticket = ticketService.findTicketByEventId(eventId, memberId);
@@ -51,6 +53,7 @@ public class TicketApiController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.TICKET_NOT_FOUND
     })
+    @CrossOrigin
     @DeleteMapping("/{ticketId}/member/{memberId}")
     public ApiResponseDto<Void> deleteTicket(@PathVariable Long ticketId, @PathVariable Long memberId
     ) {
