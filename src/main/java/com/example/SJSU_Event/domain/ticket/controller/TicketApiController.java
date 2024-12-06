@@ -27,6 +27,16 @@ public class TicketApiController {
     private final TicketService ticketService;
     private final MemberService memberService;
 
+    @Operation(summary = "Create Ticket 🔑", description = "Create a new ticket for an event")
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.EVENT_NOT_FOUND,
+    })
+    @PostMapping("/event/{eventId}/member/{memberId}")
+    public ApiResponseDto<TicketResponse> createTicket(@PathVariable Long eventId, @PathVariable Long memberId) {
+        Ticket ticket = ticketService.createTicket(eventId, memberId);
+        return ApiResponseDto.onSuccess(TicketConverter.toResponse(ticket));
+    }
+
     @Operation(summary = "Find Ticket 🔑", description = "Find Ticket with eventId")
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
@@ -35,5 +45,16 @@ public class TicketApiController {
     public ApiResponseDto<TicketResponse> findTicketByEventId(@PathVariable Long eventId, @PathVariable Long memberId) {
         Ticket ticket = ticketService.findTicketByEventId(eventId, memberId);
         return ApiResponseDto.onSuccess(TicketConverter.toResponse(ticket));
+    }
+
+    @Operation(summary = "Delete Ticket 🔑",description = "Delete a ticket for an event")
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.TICKET_NOT_FOUND
+    })
+    @DeleteMapping("/{ticketId}/member/{memberId}")
+    public ApiResponseDto<Void> deleteTicket(@PathVariable Long ticketId, @PathVariable Long memberId
+    ) {
+        ticketService.deleteTicket(ticketId, memberId);
+        return ApiResponseDto.onSuccess(null);
     }
 }

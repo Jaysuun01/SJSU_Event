@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "Event API", description = "Event API")
-@ApiResponse(responseCode = "2000", description = "Success")
+@ApiResponse(responseCode = "2000", description = "성공")
 @RequestMapping("/api/events")
 @RequiredArgsConstructor
 @RestController
