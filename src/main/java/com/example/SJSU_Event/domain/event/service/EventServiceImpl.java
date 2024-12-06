@@ -5,6 +5,7 @@ import com.example.SJSU_Event.domain.event.entity.Event;
 import com.example.SJSU_Event.domain.event.exception.EventHandler;
 import com.example.SJSU_Event.domain.event.repository.EventRepository;
 import com.example.SJSU_Event.domain.member.entity.Member;
+import com.example.SJSU_Event.domain.member.entity.Role;
 import com.example.SJSU_Event.domain.member.exception.MemberHandler;
 import com.example.SJSU_Event.domain.member.repository.MemberRepository;
 import com.example.SJSU_Event.global.exception.code.ErrorStatus;
@@ -70,7 +71,10 @@ public class EventServiceImpl implements EventService{
     }
 
     private static void validateWriter(Member member, Event event) {
-        //Compare Event owner id and memberID
+        //Admin can access all event
+        if (member.getRole() == Role.ADMIN) {
+            return;
+        }
         if (!member.getId().equals(event.getEventOwnerId())) {
             throw new EventHandler(ErrorStatus.EVENT_ONLY_TOUCHED_BY_OWNER);
         }
