@@ -5,7 +5,7 @@ import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import EventForm from "./EventForm";
 import EditForm from "./EditForm";
-
+import Tickets from "./Pages/Tickets";
 function App() {
 
 
@@ -28,6 +28,7 @@ function App() {
         
         <Route path="/createEvent" element={<EventForm />} />
         <Route path="/editForm" element={<EditForm />} />
+        <Route path="/tickets/:eventId" element={<Tickets />} />
 
       </Routes>
     </Router>
