@@ -24,12 +24,19 @@ public class EventRepository {
     public EventRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
+    /**
+     * Delete event
+     * @param event Event entity to delete
+     */
     public void delete(Event event) {
         String sql = "DELETE FROM event WHERE event_id = ?";
         jdbcTemplate.update(sql, event.getId());
     }
-
+    /**
+     * Find events by owner ID
+     * @param ownerId ID of the event owner
+     * @return List of events owned by the specified user
+     */
     public List<Event> findByOwner(Long ownerId) {
         String sql = "SELECT * FROM event WHERE event_owner_id = ?";
 
@@ -46,7 +53,11 @@ public class EventRepository {
                                 .build()
                 , ownerId);
     }
-
+    /**
+     * Save a new event
+     * @param event Event entity to save
+     * @return Saved event with generated ID
+     */
     public Event save(Event event) {
         log.info("eventOwnerId = {}", event.getEventOwnerId());
         String sql = "INSERT INTO event (event_owner_id, title, max_audience, entrance_fee, show_date, start_time, end_time) " +
@@ -68,7 +79,10 @@ public class EventRepository {
         event.setId(key);
         return event;
     }
-
+    /**
+     * Update existing event
+     * @param event Event entity with updated information
+     */
     public void update(Event event) {
         String sql = "UPDATE event SET title = ?, max_audience = ?, entrance_fee = ?, show_date = ?, start_time = ?, end_time = ? " +
                      "WHERE event_id = ?";
@@ -81,7 +95,11 @@ public class EventRepository {
                 event.getEndTime(),
                 event.getId());
     }
-
+    /**
+     * Find event by ID
+     * @param eventId ID of the event to find
+     * @return Optional containing the event if found, empty Optional otherwise
+     */
     public Optional<Event> findById(Long eventId) {
         String sql = "SELECT * FROM event WHERE event_id = ?";
 
