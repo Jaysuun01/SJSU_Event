@@ -12,6 +12,8 @@ Key features that were implemented in the project include CRUD operations that a
 - MySQL 8.0 or later
 - Gradle 7.x or later
 - Spring Boot 3.x
+- npm version 10.9.0
+- node v23.3.0
 
 ### Dependencies
 
@@ -113,7 +115,7 @@ cd [name of folder]
 ```bash
 ./gradlew build
 ```
-4. Run
+4. Run Backend
 ```bash
 ./gradlew bootRun
 ```
@@ -122,6 +124,22 @@ Swagger UI documentation will be available at http://localhost:8080/swagger-ui.h
 or 
 
 Run our project on IntelliJ and Run Main class
+
+5. Setup Frontend
+```bash
+npm install react
+
+npm install -D tailwindcss
+
+npm install axios 
+
+npm i react-router-dom  
+```
+
+6. Run Frontend
+```bash
+npm start
+```
 
 ## License
 
