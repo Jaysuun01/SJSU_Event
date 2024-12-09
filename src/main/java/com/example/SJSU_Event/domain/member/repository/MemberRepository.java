@@ -30,7 +30,11 @@ public class MemberRepository {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    // findByUsername 메서드 추가
+    /**
+     * Find member by ID
+     * @param memberId ID of the member to find
+     * @return Optional containing the member if found, empty Optional otherwise
+     */
     public Optional<Member> findById(Long memberId) {
         String sql = "SELECT * FROM member WHERE member_id = ?";
         List<Member> members = jdbcTemplate.query(sql,
@@ -56,7 +60,11 @@ public class MemberRepository {
         return members.isEmpty() ? Optional.empty() : Optional.of(members.get(0));
     }
 
-
+    /**
+     * Save a new member
+     * @param member Member entity to save
+     * @return Saved member with generated ID
+     */
     public Member save(Member member) {
         String sql = "INSERT INTO member (name, role, username, password, created_date, last_modified_date) values (?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -78,6 +86,11 @@ public class MemberRepository {
         member.setId(key);
         return member;
     }
+    /**
+     * Delete member by ID
+     * @param memberId ID of the member to delete
+     * @throws RuntimeException if member not found
+     */
     public void delete(Long memberId) {
         String sql = "DELETE FROM member WHERE member_id = ?";
         int rowsAffected = jdbcTemplate.update(sql, memberId);
@@ -86,7 +99,11 @@ public class MemberRepository {
             throw new RuntimeException("No member found with username: " + memberId);
         }
     }
-
+    /**
+     * Find member by username
+     * @param username Username to search for
+     * @return Optional containing the member
+     */
     public Optional<Member> findByUsername(String username) {
         String sql = "SELECT * FROM member WHERE username = ?";
         log.info("username = {}", username);
@@ -112,7 +129,13 @@ public class MemberRepository {
                 username);
         return members.isEmpty() ? Optional.empty() : Optional.of(members.get(0));
     }
-
+    /**
+     * Update member information
+     * @param memberId ID of the member to update
+     * @param memberUpdateInfo Updated member information
+     * @return Updated member entity
+     * @throws MemberHandler if member not found
+     */
     public Member update(Long memberId, MemberUpdateInfo memberUpdateInfo) {
         String sql = "UPDATE member " +
                      "SET name = ?, username = ?, last_modified_date = CURRENT_TIMESTAMP " +

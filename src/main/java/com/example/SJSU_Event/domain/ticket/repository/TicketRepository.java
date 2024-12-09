@@ -21,7 +21,11 @@ public class TicketRepository {
     public TicketRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
+    /**
+     * Save a new ticket
+     * @param ticket Ticket entity to save
+     * @return Saved ticket with generated ID and UUID
+     */
     public Ticket save(Ticket ticket) {
         String sql = """
         INSERT INTO ticket (uuid, due_date, event_id, member_id) 
@@ -44,7 +48,11 @@ public class TicketRepository {
         ticket.setId(key);
         return ticket;
     }
-
+    /**
+     * Find ticket by UUID
+     * @param uuid UUID of the ticket
+     * @return Optional containing the ticket if found, empty Optional otherwise
+     */
     public Optional<Ticket> findByUuid(String uuid) {
         String sql = """
         SELECT 
@@ -71,7 +79,11 @@ public class TicketRepository {
             return Optional.empty();
         }
     }
-
+    /**
+     * Find ticket by event ID
+     * @param eventId ID of the event
+     * @return Optional containing the ticket if found, empty Optional otherwise
+     */
     public Optional<Ticket> findByEventId(Long eventId) {
         String sql = """
         SELECT 
@@ -102,7 +114,12 @@ public class TicketRepository {
             return Optional.empty();
         }
     }
-
+    /**
+     * Delete ticket by ID and member ID
+     * @param ticketId ID of the ticket to delete
+     * @param memberId ID of the member who owns the ticket
+     * @throws RuntimeException if ticket not found
+     */
     public void deleteByTicketId(Long ticketId, Long memberId) {
         String sql = "DELETE FROM ticket WHERE ticket_id = ? AND member_id = ?";
         int rowsAffected = jdbcTemplate.update(sql, ticketId, memberId);
