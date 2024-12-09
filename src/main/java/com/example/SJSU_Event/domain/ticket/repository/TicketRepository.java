@@ -4,8 +4,12 @@ import com.example.SJSU_Event.domain.ticket.entity.Ticket;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +20,29 @@ public class TicketRepository {
 
     public TicketRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public Ticket save(Ticket ticket) {
+        String sql = """
+        INSERT INTO ticket (uuid, due_date, event_id, member_id) 
+        VALUES (?, ?, ?, ?)
+    """;
+
+        ticket.generateData();  // insert 전에 UUID 생성 보장
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"ticket_id"});
+            ps.setString(1, ticket.getUuid());
+            ps.setDate(2, Date.valueOf(ticket.getDueDate()));
+            ps.setLong(3, ticket.getEventId());
+            ps.setLong(4, ticket.getMemberId());
+            return ps;
+        }, keyHolder);
+
+        long key = keyHolder.getKey().longValue();
+        ticket.setId(key);
+        return ticket;
     }
 
     public Optional<Ticket> findByUuid(String uuid) {
@@ -49,9 +76,12 @@ public class TicketRepository {
         String sql = """
         SELECT 
             ticket_id as id,
-            uuid,
+            created_date as createdDate,
+            last_modified_date as lastModifiedDate,
             due_date as dueDate,
-            event_id as eventId
+            event_id as eventId,
+            uuid,
+            member_id as memberId
         FROM ticket 
         WHERE event_id = ?
     """;
@@ -59,11 +89,12 @@ public class TicketRepository {
         try {
             Ticket ticket = jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
                             Ticket.builder()
-                                    .id(rs.getLong("ticket_id"))
+                                    .id(rs.getLong("id"))
                                     .uuid(rs.getString("uuid"))
-                                    .dueDate(rs.getDate("due_date") != null ?
-                                            rs.getDate("due_date").toLocalDate() : null)
-                                    .eventId(rs.getLong("event_id"))
+                                    .dueDate(rs.getDate("dueDate") != null ?
+                                            rs.getDate("dueDate").toLocalDate() : null)
+                                    .eventId(rs.getLong("eventId"))
+                                    .memberId(rs.getLong("memberId"))
                                     .build()
                     , eventId);
             return Optional.ofNullable(ticket);
@@ -72,12 +103,12 @@ public class TicketRepository {
         }
     }
 
-    public void deleteByEventId(Long eventId) {
-        String sql = "DELETE FROM ticket WHERE event_id = ?";
-        int rowsAffected = jdbcTemplate.update(sql, eventId);
+    public void deleteByTicketId(Long ticketId, Long memberId) {
+        String sql = "DELETE FROM ticket WHERE ticket_id = ? AND member_id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, ticketId, memberId);
 
         if (rowsAffected == 0) {
-            throw new RuntimeException("No tickets found with eventId: " + eventId);
+            throw new RuntimeException("No tickets found with ticketId: " + ticketId);
         }
     }
 }

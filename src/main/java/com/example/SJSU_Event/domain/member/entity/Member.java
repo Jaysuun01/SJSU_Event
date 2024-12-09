@@ -1,6 +1,7 @@
 package com.example.SJSU_Event.domain.member.entity;
 
 import com.example.SJSU_Event.domain.auditing.entity.BaseTimeEntity;
+import com.example.SJSU_Event.domain.member.dto.SignUpDto;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -27,17 +28,20 @@ public class Member extends BaseTimeEntity {
     @Column(unique = true, nullable = false)
     private String username;
 
+    private String password;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     private Role role;
 
     private String name;
 
-    public static Member of(String username, String name, Role role) {
+    public static Member of(SignUpDto signUpDto) {
         return Member.builder()
-                .name(name)
-                .role(role)
-                .username(username)
+                .name(signUpDto.getName())
+                .role(signUpDto.getRole())
+                .username(signUpDto.getUsername())
+                .password(signUpDto.getPassword())
                 .build();
     }
 

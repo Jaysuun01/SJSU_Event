@@ -1,5 +1,8 @@
 package com.example.SJSU_Event.domain.member.controller;
 
+import com.example.SJSU_Event.domain.member.dto.LoginDto;
+import com.example.SJSU_Event.domain.member.dto.MemberUpdateInfo;
+import com.example.SJSU_Event.domain.member.dto.SignUpDto;
 import com.example.SJSU_Event.domain.member.entity.Member;
 import com.example.SJSU_Event.domain.member.service.MemberService;
 import com.example.SJSU_Event.global.annotation.api.ApiErrorCodeExample;
@@ -9,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Member API", description = "Member API")
@@ -16,39 +20,47 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 public class MemberApiController {
     private final MemberService memberService;
 
-    @Operation(summary = "Member User Registration 🔑", description = "Register user")
+    @Operation(summary = "SignUp 🔑", description = "Member Register(SignUp)")
     @ApiErrorCodeExample
+    @CrossOrigin
     @PostMapping("/register/user")
-    public ApiResponseDto<Long> registerUser(@RequestParam String name) {
-        return ApiResponseDto.onSuccess(memberService.userRegister(name));
+    public ApiResponseDto<Long> registerUser(@RequestBody SignUpDto dto) {
+        return ApiResponseDto.onSuccess(memberService.signUp(dto));
     }
-    @Operation(summary = "Member Admin Registration 🔑", description = "Register Admin")
-    @ApiErrorCodeExample(value = {
-            ErrorStatus.EVENT_NOT_FOUND,
-    })
-    @PostMapping("/register/admin")
-    public ApiResponseDto<Long> registerAdmin(@RequestParam String name) {
-        return ApiResponseDto.onSuccess(memberService.adminRegister(name));
+
+    @Operation(summary = "LogIn", description = "get Member Info By Username & Password")
+    @ApiErrorCodeExample
+    @CrossOrigin
+    @GetMapping("/login/user")
+    public ApiResponseDto<Member> login(@RequestParam String username, @RequestParam String password) {
+        LoginDto loginDto = LoginDto.builder()
+                .username(username)
+                .password(password)
+                .build();
+        return ApiResponseDto.onSuccess(memberService.login(loginDto));
     }
 
     @Operation(summary = "Update Information 🔑", description = "Update Information")
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
     })
+    @CrossOrigin
     @PutMapping("/{memberId}")
     public ApiResponseDto<Long> updateInfo(
             @PathVariable Long memberId,
-            @RequestParam String name) {
-        return ApiResponseDto.onSuccess(memberService.updateInfo(memberId, name));
+            @RequestBody MemberUpdateInfo memberUpdateInfo) {
+        return ApiResponseDto.onSuccess(memberService.updateInfo(memberId, memberUpdateInfo));
     }
 
     @Operation(summary = "Delete Member 🔑", description = "Delete Member")
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
     })
+    @CrossOrigin
     @DeleteMapping("/{memberId}")
     public ApiResponseDto<Void> deleteMember(@PathVariable Long memberId) {
         memberService.deleteMember(memberId);
@@ -59,6 +71,7 @@ public class MemberApiController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.EVENT_NOT_FOUND,
     })
+    @CrossOrigin
     @GetMapping("/{memberId}")
     public ApiResponseDto<Member> getByMemberId(@PathVariable Long memberId) {
         return ApiResponseDto.onSuccess(memberService.getByMemberId(memberId));

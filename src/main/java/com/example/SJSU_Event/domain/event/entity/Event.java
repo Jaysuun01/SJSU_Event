@@ -22,6 +22,9 @@ public class Event extends BaseTimeEntity {
     @Column(name = "event_id")
     private Long id;
 
+    @Column(nullable = false)
+    private String title;
+
     private Long eventOwnerId;
 
     private int maxAudience;
@@ -33,6 +36,7 @@ public class Event extends BaseTimeEntity {
     public static Event of(Long owner, EventRequestDto dto) {
         return Event.builder()
                 .eventOwnerId(owner)
+                .title(dto.getTitle())
                 .maxAudience(dto.getMaxAudience())
                 .entranceFee(dto.getEntranceFee())
                 .showDate(dto.getShowDate())
@@ -42,6 +46,7 @@ public class Event extends BaseTimeEntity {
     }
 
     public void update(EventRequestDto dto) {
+        this.title = dto.getTitle();
         this.maxAudience = dto.getMaxAudience();
         this.entranceFee = dto.getEntranceFee();
         this.showDate = dto.getShowDate();

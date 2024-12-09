@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface TicketService {
     Ticket findTicketByEventId(Long eventId, Long memberId);
+    Ticket createTicket(Long eventId, Long memberId);
+    void deleteTicket(Long ticketId, Long memberId);
 }

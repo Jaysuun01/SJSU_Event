@@ -34,18 +34,26 @@ public class Ticket extends BaseTimeEntity {
 
     private Long eventId;
 
-    @PrePersist
-    private void generateData() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID().toString();
-        }
-    }
+    private Long memberId;
 
-    public static Ticket of(Long eventId, String uuid, LocalDate localDate) {
+
+    public static Ticket of(Long eventId, Long memberId,String uuid, LocalDate localDate) {
         return Ticket.builder()
                 .eventId(eventId)
+                .memberId(memberId)
                 .uuid(uuid)
                 .dueDate(localDate)
                 .build();
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @PrePersist
+    public void generateData() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
     }
 }
