@@ -119,6 +119,9 @@ cd [name of folder]
 ```
 Swagger UI documentation will be available at http://localhost:8080/swagger-ui.html
 
+or 
+
+Run our project on IntelliJ and Run Main class
 
 ## License
 
